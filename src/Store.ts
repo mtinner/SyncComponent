@@ -1,0 +1,13 @@
+import {CONSTANTS} from './common/Constants';
+export class Store {
+    get(): string | null {
+        let storeString = localStorage.getItem(CONSTANTS.HLS_SESSIONID);
+        return JSON.parse(storeString);
+    }
+
+    save(sessionId: string) {
+        if (sessionId) {
+            localStorage.setItem(CONSTANTS.HLS_SESSIONID, sessionId);
+        }
+    }
+}
