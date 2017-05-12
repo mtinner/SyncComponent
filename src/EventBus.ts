@@ -1,5 +1,5 @@
-import {CONSTANTS} from './common/Constants';
-import {generateUid} from './common/UidGenerator';
+import {CONSTANTS} from './helper/Constants';
+import {generateUid} from './helper/UidGenerator';
 export class EventBus {
     private subscribers = new Array<Topic>();
     private static _instance: EventBus = new EventBus();

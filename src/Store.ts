@@ -1,4 +1,4 @@
-import {CONSTANTS} from './common/Constants';
+import {CONSTANTS} from './helper/Constants';
 export class Store {
     get(): string | null {
         let storeString = localStorage.getItem(CONSTANTS.HLS_SESSIONID);
