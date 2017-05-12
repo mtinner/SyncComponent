@@ -1,0 +1,32 @@
+{
+  "name": "sync-component",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "webpack",
+    "build-prod": "webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtinner/SyncComponent.git"
+  },
+  "author": "mtinner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mtinner/SyncComponent/issues"
+  },
+  "homepage": "https://github.com/mtinner/SyncComponent#readme",
+  "dependencies": {
+    "window": "^3.1.6",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/ws": "0.0.41",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.3.2",
+    "webpack": "^2.5.1"
+  }
+}
