@@ -1,6 +1,6 @@
-import WebSocket from 'ws';
 import {CONSTANTS} from './helper/Constants';
 import {Store} from './Store';
+import {IMessage} from './helper/IMessage';
 
 
 export class Socket {
@@ -10,14 +10,18 @@ export class Socket {
     }
 
     start() {
+
         const ws = new WebSocket(`ws://${CONSTANTS.SERVER_IP}:${CONSTANTS.SERVER_PORT}`);
 
-        ws.on('open', () => {
-            ws.send(this.store.get() || {});
-        });
+        ws.onopen = () => {
+            console.log({messageType: CONSTANTS.MESSAGE_TYPE.NEW, data: {sessionId: this.store.get()}});
+            ws.send(JSON.stringify({messageType: CONSTANTS.MESSAGE_TYPE.NEW, data: {sessionId: this.store.get()}}));
+        };
 
-        ws.on('message', (data, flags) => {
-            console.log('data', data, 'flags', flags);
-        });
+        ws.onmessage = (event: { data: string }) => {
+            let message: IMessage = JSON.parse(event.data);
+            console.log('data', message.data);
+            this.store.save(message.data.sessionId);
+        };
     }
 }
