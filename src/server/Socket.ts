@@ -4,19 +4,20 @@ import {IMessage} from './helper/IMessage';
 import {generateUid} from './helper/UidGenerator';
 
 export class Socket {
+    private wss;
+    private connectedWebSocket = new Array<ISessionWebSocket>();
 
     start() {
-        const wss = new WebSocket.Server({port: CONSTANTS.SERVER_PORT});
-        wss.on('connection', (ws: MyWebSocket) => {
+        this.wss = new WebSocket.Server({port: CONSTANTS.SERVER_PORT});
+        this.wss.on('connection', (ws: MyWebSocket) => {
             console.log((new Date()) + ' Connection accepted.');
 
             ws.on('message', (message) => {
-                console.log('Received Message: ' + message);
                 let messageObj: IMessage = JSON.parse(message);
-                console.log('obj:', messageObj);
                 if (messageObj.messageType === CONSTANTS.MESSAGE_TYPE.NEW) {
+                    let sessionId;
                     if (messageObj.data && messageObj.data.sessionId) {
-                        console.log('if');
+                        sessionId = messageObj.data.sessionId;
                         ws.send(JSON.stringify({
                             ...messageObj,
                             ...{
@@ -28,19 +29,27 @@ export class Socket {
                         }))
                     }
                     else {
-                        console.log('else');
-                        ws.send(JSON.stringify({...messageObj, ...{data: {sessionId: generateUid()}}}));
+                        sessionId = generateUid();
+                        ws.send(JSON.stringify({...messageObj, ...{data: {sessionId: sessionId}}}));
                     }
+                    this.connectedWebSocket.push({sessionId: sessionId, ws: ws});
                 }
                 else if (messageObj.messageType === CONSTANTS.MESSAGE_TYPE.CHANGE) {
                     messageObj.data.timestamp = new Date();
-                    ws.send(JSON.stringify(messageObj));
+                    this.multiCast(ws, messageObj);
                 }
             });
-
             ws.on('close', () => {
                 console.log((new Date()) + ' Peer ' + ws.remoteAddress + ' close ws.');
             });
+        });
+    }
+
+    multiCast(ws, messageObj: IMessage) {
+        this.connectedWebSocket.forEach((sessionWebsocket: ISessionWebSocket) => {
+            if (sessionWebsocket.ws !== ws && sessionWebsocket.ws.readyState === WebSocket.OPEN && sessionWebsocket.sessionId === messageObj.data.sessionId) {
+                sessionWebsocket.ws.send(JSON.stringify(messageObj));
+            }
         });
     }
 }
@@ -55,4 +64,9 @@ declare class MyWebSocket extends WebSocket {
 
 declare class MySocket {
     setKeepAlive(bool: boolean): void;
+}
+
+interface ISessionWebSocket {
+    sessionId: string,
+    ws: MyWebSocket
 }
