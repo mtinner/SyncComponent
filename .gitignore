@@ -1,5 +1,5 @@
 .idea
-bundle.js
+/dist
 
 # Logs
 logs

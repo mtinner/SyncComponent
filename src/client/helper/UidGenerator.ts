@@ -1,5 +1,5 @@
 export function generateUid(): string {
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    return 'subscriberID' + s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
 
