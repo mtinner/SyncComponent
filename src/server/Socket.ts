@@ -14,6 +14,7 @@ export class Socket {
 
             ws.on('message', (message) => {
                 let messageObj: IMessage = JSON.parse(message);
+                console.log(messageObj);
                 if (messageObj.messageType === CONSTANTS.MESSAGE_TYPE.NEW) {
                     let sessionId;
                     if (messageObj.data && messageObj.data.sessionId) {
@@ -35,7 +36,6 @@ export class Socket {
                     this.connectedWebSocket.push({sessionId: sessionId, ws: ws});
                 }
                 else if (messageObj.messageType === CONSTANTS.MESSAGE_TYPE.CHANGE) {
-                    messageObj.data.timestamp = new Date();
                     this.multiCast(ws, messageObj);
                 }
             });

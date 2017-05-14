@@ -1,5 +1,7 @@
 import {CONSTANTS} from './helper/Constants';
 import {generateUid} from './helper/UidGenerator';
+import {ISubscription} from './helper/ISubscription';
+import {IEmitOptions} from './helper/IEmitOptions';
 export class EventBus {
     private subscribers = new Array<Topic>();
     private static _instance: EventBus = new EventBus();
@@ -10,7 +12,7 @@ export class EventBus {
         }
         window[CONSTANTS.HLS_SESSION] = {};
         window[CONSTANTS.HLS_SESSION].subscribe = this.subscribe;
-        window[CONSTANTS.HLS_SESSION].change = this.change;
+        window[CONSTANTS.HLS_SESSION].emit = this.emit;
         EventBus._instance = this;
     }
 
@@ -18,22 +20,25 @@ export class EventBus {
         return EventBus._instance;
     }
 
-    subscribe = (name: string, callback: Function) => {
+    subscribe = (name: string, callback: Function): ISubscription => {
         if (!this.subscribers.some(topic => topic.name === name)) {
             this.subscribers.push({name: name, subscribers: new Array<Subscriber>()});
         }
-        let uid = generateUid();
+        let sid = generateUid();
         let topic = this.subscribers.find(topic => topic.name === name);
-        topic.subscribers.push({uid: uid, cb: callback});
-        return {unsubscribe: this.unsubscriber(name, uid)};
+        topic.subscribers.push({uid: sid, cb: callback});
+        return {unsubscribe: this.unsubscriber(name, sid), uid: sid};
     };
 
-    emit(name: string, data: any) {
+    emit = (name: string, data: any, options?: IEmitOptions) =>{
         if (this.subscribers.some(topic => topic.name === name)) {
             let topic = this.subscribers.find(topic => topic.name === name);
-            topic.subscribers.forEach(subscriber => subscriber.cb(data));
+            topic.subscribers.forEach(subscriber => {
+                if (!(options && options.notifyOthersOnly && options.notifyOthersOnly.uid === subscriber.uid))
+                    subscriber.cb(data)
+            });
         }
-    }
+    };
 
 
     unsubscriber = (name: string, uid: string) => {
@@ -46,10 +51,6 @@ export class EventBus {
             }
         }
     };
-
-    change = (name, data) => {
-        this.emit(name, data);
-    }
 }
 
 interface Subscriber {

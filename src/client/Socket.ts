@@ -2,17 +2,17 @@ import {CONSTANTS} from './helper/Constants';
 import {Store} from './Store';
 import {IMessage} from './helper/IMessage';
 import {EventBus} from './EventBus';
+import {ISubscription} from './helper/ISubscription';
 
 
 export class Socket {
     private store = new Store();
     private eventBus = EventBus.getInstance();
     private ws = new WebSocket(`ws://${CONSTANTS.SERVER_IP}:${CONSTANTS.SERVER_PORT}`);
+    private subscription: ISubscription;
 
 
     start() {
-
-
         this.ws.onopen = () => {
             console.log({messageType: CONSTANTS.MESSAGE_TYPE.NEW, data: {sessionId: this.store.get()}});
             this.ws.send(JSON.stringify({
@@ -28,11 +28,11 @@ export class Socket {
                 this.store.save(message.data.sessionId);
             }
             else if (message.messageType === CONSTANTS.MESSAGE_TYPE.CHANGE) {
-                this.eventBus.emit(CONSTANTS.SESSION_NOTIFIER_ID, message.data);
+                this.eventBus.emit(CONSTANTS.SESSION_NOTIFIER_ID, message.data, {notifyOthersOnly: this.subscription});
             }
         };
 
-        this.eventBus.subscribe(CONSTANTS.SESSION_NOTIFIER_ID, this.sessionChange)
+        this.subscription = this.eventBus.subscribe(CONSTANTS.SESSION_NOTIFIER_ID, this.sessionChange);
     }
 
     sessionChange = (data) => {
