@@ -2,7 +2,7 @@ import {CONSTANTS} from './helper/Constants';
 export class Store {
     get(): string | null {
         let storeString = localStorage.getItem(CONSTANTS.HLS_SESSIONID);
-        return JSON.parse(storeString);
+        return storeString;
     }
 
     save(sessionId: string) {
