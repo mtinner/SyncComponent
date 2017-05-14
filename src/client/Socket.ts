@@ -26,6 +26,7 @@ export class Socket {
             console.log('data', message.data);
             if (message.messageType === CONSTANTS.MESSAGE_TYPE.NEW) {
                 this.store.save(message.data.sessionId);
+                this.eventBus.emit(CONSTANTS.SESSION_NOTIFIER_ID, message.data, {notifyOthersOnly: this.subscription});
             }
             else if (message.messageType === CONSTANTS.MESSAGE_TYPE.CHANGE) {
                 this.eventBus.emit(CONSTANTS.SESSION_NOTIFIER_ID, message.data, {notifyOthersOnly: this.subscription});

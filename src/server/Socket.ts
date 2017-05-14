@@ -23,8 +23,7 @@ export class Socket {
                             ...messageObj,
                             ...{
                                 data: {
-                                    sessionId: messageObj.data.sessionId,
-                                    timestamp: new Date()
+                                    sessionId: messageObj.data.sessionId
                                 }
                             }
                         }))

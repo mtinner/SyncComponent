@@ -27,12 +27,16 @@ export class EventBus {
         let sid = generateUid();
         let topic = this.subscribers.find(topic => topic.name === name);
         topic.subscribers.push({uid: sid, cb: callback});
+        if (topic.data) {
+            callback(topic.data);
+        }
         return {unsubscribe: this.unsubscriber(name, sid), uid: sid};
     };
 
-    emit = (name: string, data: any, options?: IEmitOptions) =>{
+    emit = (name: string, data: any, options?: IEmitOptions) => {
         if (this.subscribers.some(topic => topic.name === name)) {
             let topic = this.subscribers.find(topic => topic.name === name);
+            topic.data = data;
             topic.subscribers.forEach(subscriber => {
                 if (!(options && options.notifyOthersOnly && options.notifyOthersOnly.uid === subscriber.uid))
                     subscriber.cb(data)
@@ -61,4 +65,5 @@ interface Subscriber {
 interface Topic {
     name: string,
     subscribers: Array<Subscriber>
+    data?: any
 }
