@@ -19,10 +19,12 @@
   },
   "homepage": "https://github.com/mtinner/SyncComponent#readme",
   "dependencies": {
+    "mongodb": "^2.2.26",
     "window": "^3.1.6",
     "ws": "^2.3.1"
   },
   "devDependencies": {
+    "@types/mongodb": "^2.2.2",
     "@types/ws": "0.0.41",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",

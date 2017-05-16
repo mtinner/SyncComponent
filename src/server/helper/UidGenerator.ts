@@ -1,6 +1,6 @@
 export function generateUid(): string {
-    return 'sessionID' + s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
+    return 'sessionID' + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4();
 }
 
 function s4() {
